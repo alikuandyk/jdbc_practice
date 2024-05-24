@@ -43,18 +43,20 @@ public class JDBCExample {
     private static Cat getById(int id) {
         String sql = "select * from cat where id = ?";
 
-        try (
-                Connection connection = getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)
-                ) {
+        try (Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql))
+        {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
-            rs.next();
 
-            String name = rs.getString("name");
-            String color = rs.getString("color");
+            if (rs.next()) {
+                String name = rs.getString("name");
+                String color = rs.getString("color");
 
-            return new Cat(id, name, color);
+                return new Cat(id, name, color);
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
